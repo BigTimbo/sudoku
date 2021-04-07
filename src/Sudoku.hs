@@ -41,7 +41,8 @@ example =
 
     A sudoku with just blanks. |-}
 allBlankPuzzle :: Puzzle
-allBlankPuzzle = undefined
+allBlankPuzzle = Puzzle (replicate 9 (replicate 9 Nothing))
+
 
 {-| Ex 1.2
 

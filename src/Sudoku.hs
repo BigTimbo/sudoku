@@ -48,21 +48,26 @@ allBlankPuzzle = Puzzle (replicate 9 (replicate 9 Nothing))
 
     Checks if sud is really a valid representation of a sudoku puzzle. |-}
 isPuzzle :: Puzzle -> Bool
-isPuzzle s = and[length (rows s) == 9, [length row == 9 | row <- (rows s)], [f row | row <- (rows s)] where 
-                f row = and [f' cell | cell <- row] where
-                            f' Nothing = True f' (Just n) = n <= 9 && n>=0]]
--- isPuzzle p = and[all (== 9) (map length (rows p)), length (rows p) == 9, all (inRange(1,9)) r | r <- rows p]
+isPuzzle puzzle = length (rows puzzle) == 9 && and [length row == 9 | row <- rows puzzle] && and [foreach row | row <- rows puzzle] where
+    foreach row = and [foreach' cell | cell <- row] where
+        foreach' Nothing = True
+        foreach' (Just number) = number <= 9 && number>=1
 {-| Ex 1.3
 
     Checks if the puzzle is already solved, i.e. there are no blanks. |-}
 isSolved :: Puzzle -> Bool
-isSolved p = and [Nothing `notElem` r | r <- rows p]
+isSolved puzzle = and [Nothing `notElem` row | row <- rows puzzle]
 
 {-| Ex 2.1
 
     `printPuzzle s' prints a representation of `s'. |-}
+drawPuzzle puzzle = concat [foreach row ++ "\n" | row <- rows puzzle] where
+    foreach row = [foreach' cell | cell <- row] where
+        foreach' Nothing =  "."
+        foreach' (Just number) = number
+
 printPuzzle :: Puzzle -> IO ()
-printPuzzle = undefined
+printPuzzle puzzle = putStrLn (drawPuzzle puzzle)
 
 {-| Ex 2.2
 

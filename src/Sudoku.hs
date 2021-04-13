@@ -1,6 +1,6 @@
 module Sudoku where
 
-import Data.Char (digitToInt)
+import Data.Char (intToDigit)
 import Data.Maybe (fromJust, isJust, isNothing, listToMaybe)
 import Data.List (transpose, group, sort, elemIndex)
 import Data.List.Split (chunksOf)
@@ -61,10 +61,11 @@ isSolved puzzle = and [Nothing `notElem` row | row <- rows puzzle]
 {-| Ex 2.1
 
     `printPuzzle s' prints a representation of `s'. |-}
+-- drawPuzzle puzzle = 
 drawPuzzle puzzle = concat [foreach row ++ "\n" | row <- rows puzzle] where
     foreach row = [foreach' cell | cell <- row] where
-        foreach' Nothing =  "."
-        foreach' (Just number) = number
+        foreach' Nothing =  '.'
+        foreach' (Just number) = intToDigit number
 
 printPuzzle :: Puzzle -> IO ()
 printPuzzle puzzle = putStrLn (drawPuzzle puzzle)

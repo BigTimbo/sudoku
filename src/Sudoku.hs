@@ -1,6 +1,6 @@
 module Sudoku where
 
-import Data.Char (intToDigit)
+import Data.Char (digitToInt, intToDigit)
 import Data.Maybe (fromJust, isJust, isNothing, listToMaybe)
 import Data.List (transpose, group, sort, elemIndex)
 import Data.List.Split (chunksOf)
@@ -71,11 +71,39 @@ printPuzzle :: Puzzle -> IO ()
 printPuzzle puzzle = putStrLn (drawPuzzle puzzle)
 
 {-| Ex 2.2
-
+    -- sud <- readFile "puzzles/easy1.sud"
     `readPuzzle f' reads from the FilePath `f', and either delivers it, or stops
     if `f' did not contain a puzzle. |-}
+formatString :: String -> Block
+formatString [] = []
+formatString (x:xs) = case x of
+    '.' -> Nothing : formatString xs
+    '\n' -> formatString xs
+    _ -> Just (digitToInt x) : formatString xs
+      
+    -- map (map pure) (lines formatString) :: [[String]]
+    -- x <= 9 && x >= 1 -> Just (digitToInt x)
+    -- otherwise -> formatString xs
 readPuzzle :: FilePath -> IO Puzzle
-readPuzzle = undefined
+readPuzzle path = readFile path >>= pure . (\ x -> if (isPuzzle) x then x else error "File Doesn't Contain Valid Sudoku Puzzle") . Puzzle . map formatString . lines
+
+-- textToPuzzle puzzleText = if not isPuzzle(parse s) then error "File Doesn't Contain Valid Sudoku Puzzle" else parse s where
+--     string =
+--         Puzzle 
+--         . (map (map pure))
+--         . lines where
+--         pure '.' = Nothing
+--         pure number = Just (digitToInt number)
+-- textToPuzzle puzzleText = [foreach row | row <- rows (map (map pure) (lines puzzleText) :: [[String]])] where
+--     foreach row = and [foreach' cell | cell <- row] where
+--         foreach' '.' = Nothing
+--         foreach' number = Just number
+
+-- readPuzzle :: FilePath -> IO Puzzle
+-- readPuzzle path = do
+--     puzzleText <- readFile path
+--     return (textToPuzzle puzzleText)
+-- readPuzzle path = if not isPuzzle(puzzle) then error  else putStrLn (fileText)
 
 {-| Ex 3.1
 

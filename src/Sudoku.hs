@@ -80,40 +80,56 @@ formatString (x:xs) = case x of
     '.' -> Nothing : formatString xs
     '\n' -> formatString xs
     _ -> Just (digitToInt x) : formatString xs
-      
-    -- map (map pure) (lines formatString) :: [[String]]
-    -- x <= 9 && x >= 1 -> Just (digitToInt x)
-    -- otherwise -> formatString xs
+
 readPuzzle :: FilePath -> IO Puzzle
 readPuzzle path = readFile path >>= pure . (\ x -> if (isPuzzle) x then x else error "File Doesn't Contain Valid Sudoku Puzzle") . Puzzle . map formatString . lines
 
--- textToPuzzle puzzleText = if not isPuzzle(parse s) then error "File Doesn't Contain Valid Sudoku Puzzle" else parse s where
---     string =
---         Puzzle 
---         . (map (map pure))
---         . lines where
---         pure '.' = Nothing
---         pure number = Just (digitToInt number)
--- textToPuzzle puzzleText = [foreach row | row <- rows (map (map pure) (lines puzzleText) :: [[String]])] where
---     foreach row = and [foreach' cell | cell <- row] where
---         foreach' '.' = Nothing
---         foreach' number = Just number
-
--- readPuzzle :: FilePath -> IO Puzzle
--- readPuzzle path = do
---     puzzleText <- readFile path
---     return (textToPuzzle puzzleText)
--- readPuzzle path = if not isPuzzle(puzzle) then error  else putStrLn (fileText)
-
 {-| Ex 3.1
-
+    -- isValidBlock [Just 1, Just 7, Nothing, Nothing, Just 3, Nothing, Nothing, Nothing, Just 2] = True
+    -- isValidBlock [Just 1, Just 7, Nothing, Nothing, Just 3, Nothing, Nothing, Nothing, Just 1] = False
     Check that a block contains no duplicate values. |-}
 isValidBlock :: Block -> Bool
-isValidBlock = undefined
+isValidBlock [] = True
+isValidBlock (Nothing:xs) = isValidBlock xs
+isValidBlock (x:xs) = if notElem x xs then isValidBlock xs else False
 
 {-| Ex 3.2
-
+    
     Collect all blocks on a board - the rows, the columns and the squares. |-}
+
+    {- example =
+    [
+    [Just 3,Nothing,Nothing,Nothing,Just 4,Just 2,Nothing,Nothing,Nothing],
+    [Just 6,Just 5,Nothing,Nothing,Nothing,Just 7,Nothing,Just 8,Nothing],
+    [Nothing,Nothing,Just 9,Nothing,Nothing,Nothing,Just 5,Just 3,Just 7],
+    [Nothing,Nothing,Just 2,Nothing,Just 5,Just 4,Just 3,Nothing,Just 6],
+    [Just 7,Nothing,Nothing,Just 1,Nothing,Just 6,Nothing,Nothing,Just 9],
+    [Just 1,Nothing,Just 4,Just 3,Just 2,Nothing,Just 8,Nothing,Nothing],
+    [Just 2,Just 1,Just 7,Nothing,Nothing,Nothing,Just 9,Nothing,Nothing],
+    [Nothing,Just 8,Nothing,Just 2,Nothing,Nothing,Nothing,Just 6,Just 4],
+    [Nothing,Nothing,Nothing,Just 8,Just 9,Nothing,Nothing,Nothing,Just 3],
+
+    [Just 3,Just 6,Nothing,Nothing,Just 7,Just 1,Just 2,Nothing,Nothing],
+    [Nothing,Just 5,Nothing,Nothing,Nothing,Nothing,Just 1,Just 8,Nothing],
+    [Nothing,Nothing,Just 9,Just 2,Nothing,Just 4,Just 7,Nothing,Nothing],
+    [Nothing,Nothing,Nothing,Nothing,Just 1,Just 3,Nothing,Just 2,Just 8],
+    [Just 4,Nothing,Nothing,Just 5,Nothing,Just 2,Nothing,Nothing,Just 9],
+    [Just 2,Just 7,Nothing,Just 4,Just 6,Nothing,Nothing,Nothing,Nothing],
+    [Nothing,Nothing,Just 5,Just 3,Nothing,Just 8,Just 9,Nothing,Nothing],
+    [Nothing,Just 8,Just 3,Nothing,Nothing,Nothing,Nothing,Just 6,Nothing],
+    [Nothing,Nothing,Just 7,Just 6,Just 9,Nothing,Nothing,Just 4,Just 3],
+    
+    [Just 3,Just 6,Nothing,Nothing,Just 5,Nothing,Nothing,Nothing,Just 9],
+    [Nothing,Nothing,Nothing,Just 4,Nothing,Nothing,Just 2,Just 7,Nothing],
+    [Nothing,Nothing,Just 5,Nothing,Just 8,Just 3,Nothing,Nothing,Just 7],
+    [Nothing,Just 7,Just 1,Nothing,Nothing,Nothing,Just 2,Nothing,Just 4],
+    [Nothing,Just 1,Just 3,Just 5,Nothing,Just 2,Just 4,Just 6,Nothing],
+    [Just 3,Nothing,Just 8,Nothing,Nothing,Nothing,Just 6,Just 9,Nothing],
+    [Just 2,Nothing,Nothing,Just 1,Just 8,Nothing,Just 7,Nothing,Nothing],
+    [Nothing,Just 2,Just 8,Nothing,Nothing,Just 9,Nothing,Nothing,Nothing],
+    [Just 9,Nothing,Nothing,Nothing,Just 6,Nothing,Nothing,Just 4,Just 3]
+    ]
+    -}
 blocks :: Puzzle -> [Block]
 blocks = undefined
 

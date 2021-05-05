@@ -2,7 +2,7 @@ module Sudoku where
 
 import Data.Char (digitToInt, intToDigit)
 import Data.Maybe (fromJust, isJust, isNothing, listToMaybe)
-import Data.List (transpose, group, sort, elemIndex, findIndex)
+import Data.List (transpose, group, sort, elemIndex, findIndex, find)
 import Data.List.Split (chunksOf)
 
 -------------------------------------------------------------------------
@@ -174,19 +174,32 @@ blank puzzle = case (findIndex isJust indexList) of Just x -> Pos (x, fromJust (
     the position `p' is updated with the value `v'. |-}
 update :: Puzzle -> Pos -> Maybe Int -> Puzzle
 update puzzle (Pos(x,y)) value = Puzzle $ take x (rows puzzle) ++ [row !!= (y, value)] ++ drop (x+1) (rows puzzle)
-    where row = (rows puzzle) !! x
+    where row = (rows puzzle) !! y
 
 {-| Ex 5.1
 
     Solve the puzzle. |-}
 solve :: Puzzle -> Maybe Puzzle
-solve = undefined
+solve puzzle | not (isValidPuzzle puzzle)       = Nothing  -- There's a violation in s
+        | isSolved puzzle       = Just puzzle   -- s is already solved
+        | otherwise = pickASolution possibleSolutions
+  where
+    nineUpdatedSuds   = [update puzzle (blank puzzle) (Just n) | n <- [1..9]] :: [Puzzle]
+    possibleSolutions = [solve s' | s' <- nineUpdatedSuds]
+
+pickASolution :: [Maybe Puzzle] -> Maybe Puzzle
+pickASolution [] = Nothing
+pickASolution (x:xs) = if isJust x then x else pickASolution xs
+
 
 {-| Ex 5.2
 
     Read a puzzle and solve it. |-}
 readAndSolve :: FilePath -> IO (Maybe Puzzle)
-readAndSolve = undefined
+readAndSolve path = do
+                   puzzle <- readPuzzle path 
+                   pure (solve puzzle)
+
 
 {-| Ex 5.3
 

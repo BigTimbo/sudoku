@@ -2,7 +2,7 @@ module Sudoku where
 
 import Data.Char (digitToInt, intToDigit)
 import Data.Maybe (fromJust, isJust, isNothing, listToMaybe)
-import Data.List (transpose, group, sort, elemIndex)
+import Data.List (transpose, group, sort, elemIndex, findIndex)
 import Data.List.Split (chunksOf)
 
 -------------------------------------------------------------------------
@@ -99,6 +99,16 @@ isValidBlock (x:xs) = if notElem x xs then isValidBlock xs else False
 
     {- example =
     [
+    [Just 3,Just 6,Nothing,Nothing,Just 7,Just 1,Just 2,Nothing,Nothing],
+    [Nothing,Just 5,Nothing,Nothing,Nothing,Nothing,Just 1,Just 8,Nothing],
+    [Nothing,Nothing,Just 9,Just 2,Nothing,Just 4,Just 7,Nothing,Nothing],
+    [Nothing,Nothing,Nothing,Nothing,Just 1,Just 3,Nothing,Just 2,Just 8],
+    [Just 4,Nothing,Nothing,Just 5,Nothing,Just 2,Nothing,Nothing,Just 9],
+    [Just 2,Just 7,Nothing,Just 4,Just 6,Nothing,Nothing,Nothing,Nothing],
+    [Nothing,Nothing,Just 5,Just 3,Nothing,Just 8,Just 9,Nothing,Nothing],
+    [Nothing,Just 8,Just 3,Nothing,Nothing,Nothing,Nothing,Just 6,Nothing],
+    [Nothing,Nothing,Just 7,Just 6,Just 9,Nothing,Nothing,Just 4,Just 3],
+
     [Just 3,Nothing,Nothing,Nothing,Just 4,Just 2,Nothing,Nothing,Nothing],
     [Just 6,Just 5,Nothing,Nothing,Nothing,Just 7,Nothing,Just 8,Nothing],
     [Nothing,Nothing,Just 9,Nothing,Nothing,Nothing,Just 5,Just 3,Just 7],
@@ -109,35 +119,37 @@ isValidBlock (x:xs) = if notElem x xs then isValidBlock xs else False
     [Nothing,Just 8,Nothing,Just 2,Nothing,Nothing,Nothing,Just 6,Just 4],
     [Nothing,Nothing,Nothing,Just 8,Just 9,Nothing,Nothing,Nothing,Just 3],
 
-    [Just 3,Just 6,Nothing,Nothing,Just 7,Just 1,Just 2,Nothing,Nothing],
-    [Nothing,Just 5,Nothing,Nothing,Nothing,Nothing,Just 1,Just 8,Nothing],
-    [Nothing,Nothing,Just 9,Just 2,Nothing,Just 4,Just 7,Nothing,Nothing],
-    [Nothing,Nothing,Nothing,Nothing,Just 1,Just 3,Nothing,Just 2,Just 8],
-    [Just 4,Nothing,Nothing,Just 5,Nothing,Just 2,Nothing,Nothing,Just 9],
-    [Just 2,Just 7,Nothing,Just 4,Just 6,Nothing,Nothing,Nothing,Nothing],
-    [Nothing,Nothing,Just 5,Just 3,Nothing,Just 8,Just 9,Nothing,Nothing],
-    [Nothing,Just 8,Just 3,Nothing,Nothing,Nothing,Nothing,Just 6,Nothing],
-    [Nothing,Nothing,Just 7,Just 6,Just 9,Nothing,Nothing,Just 4,Just 3],
-    
     [Just 3,Just 6,Nothing,Nothing,Just 5,Nothing,Nothing,Nothing,Just 9],
-    [Nothing,Nothing,Nothing,Just 4,Nothing,Nothing,Just 2,Just 7,Nothing],
-    [Nothing,Nothing,Just 5,Nothing,Just 8,Just 3,Nothing,Nothing,Just 7],
     [Nothing,Just 7,Just 1,Nothing,Nothing,Nothing,Just 2,Nothing,Just 4],
-    [Nothing,Just 1,Just 3,Just 5,Nothing,Just 2,Just 4,Just 6,Nothing],
-    [Just 3,Nothing,Just 8,Nothing,Nothing,Nothing,Just 6,Just 9,Nothing],
     [Just 2,Nothing,Nothing,Just 1,Just 8,Nothing,Just 7,Nothing,Nothing],
+    [Nothing,Nothing,Nothing,Just 4,Nothing,Nothing,Just 2,Just 7,Nothing],
+    [Nothing,Just 1,Just 3,Just 5,Nothing,Just 2,Just 4,Just 6,Nothing],
     [Nothing,Just 2,Just 8,Nothing,Nothing,Just 9,Nothing,Nothing,Nothing],
+    [Nothing,Nothing,Just 5,Nothing,Just 8,Just 3,Nothing,Nothing,Just 7],
+    [Just 3,Nothing,Just 8,Nothing,Nothing,Nothing,Just 6,Just 9,Nothing],
     [Just 9,Nothing,Nothing,Nothing,Just 6,Nothing,Nothing,Just 4,Just 3]
     ]
     -}
 blocks :: Puzzle -> [Block]
-blocks = undefined
+blocks puzzle = row ++ transpose row ++ (map concat . concatMap transpose . chunksOf 3 . map (chunksOf 3)) row
+    where row = rows puzzle
+
+--     (rows puzzle) ++ (transpose (rows puzzle)) ++ squares puzzle where
+--     squares puzzle = [square (x,y) puzzle | y <- [0..2], x <- [0..2]]
+
+-- row :: Int -> Puzzle -> Block
+-- row int puzzle = (rows puzzle) !! int
+
+-- square :: (Int, Int) -> Puzzle -> Block
+-- square (x,y) puzzle = 
+--       concat
+--       $ [take 3 (drop (x*3) row) | row <- take 3 (drop (y*3) (rows puzzle))]
 
 {-| Ex 3.3
 
     Check that all blocks in a puzzle are legal. |-}
 isValidPuzzle :: Puzzle -> Bool
-isValidPuzzle = undefined
+isValidPuzzle puzzle = and [isValidBlock block | block <- (blocks puzzle)]
 
 {-| Ex 4.1
 
@@ -145,15 +157,16 @@ isValidPuzzle = undefined
     the Puzzle that is still blank. If there are more than one blank
     position, you may decide yourself which one to return. |-}
 blank :: Puzzle -> Pos
-blank = undefined
-
+blank puzzle = case (findIndex isJust indexList) of Just x -> Pos (x, fromJust (indexList !! x))
+    where indexList = [elemIndex Nothing row | row <- rows puzzle]
+                   
 {-| Ex 4.2
 
     Given a list, and a tuple containing an index in the list and a
     new value, updates the given list with the new value at the given
     index. |-}
 (!!=) :: [a] -> (Int,a) -> [a]
-(!!=) = undefined
+(!!=) list (index, value) = if index < 0 || index > (length list)-1 then list else (take index list) ++ [value] ++ (drop (index+1) list)
 
 {-| Ex 4.3
 
@@ -179,4 +192,3 @@ readAndSolve = undefined
     Checks if s1 is a solution of s2. |-}
 isSolutionOf :: Puzzle -> Puzzle -> Bool
 isSolutionOf = undefined
-

@@ -1,7 +1,7 @@
 module Sudoku where
 
 import Data.Char (digitToInt, intToDigit)
-import Data.Maybe (fromJust, isJust, isNothing, listToMaybe)
+import Data.Maybe (fromJust, isJust, isNothing, listToMaybe, maybeToList)
 import Data.List (transpose, group, sort, elemIndex, findIndex, find)
 import Data.List.Split (chunksOf)
 
@@ -205,4 +205,5 @@ readAndSolve path = do
 
     Checks if s1 is a solution of s2. |-}
 isSolutionOf :: Puzzle -> Puzzle -> Bool
-isSolutionOf = undefined
+isSolutionOf compPuzzle unfPuzzle = if not (isValidPuzzle compPuzzle) && not (isSolved compPuzzle) then False else all (\(x,y) -> isNothing y || x == y)
+    (zip ((concat . rows) compPuzzle) ((concat . rows) unfPuzzle))

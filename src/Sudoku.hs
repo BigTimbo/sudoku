@@ -97,53 +97,10 @@ isValidBlock (x:xs) = if notElem x xs then isValidBlock xs else False
     
     Collect all blocks on a board - the rows, the columns and the squares. |-}
 
-    {- example =
-    [
-    [Just 3,Just 6,Nothing,Nothing,Just 7,Just 1,Just 2,Nothing,Nothing],
-    [Nothing,Just 5,Nothing,Nothing,Nothing,Nothing,Just 1,Just 8,Nothing],
-    [Nothing,Nothing,Just 9,Just 2,Nothing,Just 4,Just 7,Nothing,Nothing],
-    [Nothing,Nothing,Nothing,Nothing,Just 1,Just 3,Nothing,Just 2,Just 8],
-    [Just 4,Nothing,Nothing,Just 5,Nothing,Just 2,Nothing,Nothing,Just 9],
-    [Just 2,Just 7,Nothing,Just 4,Just 6,Nothing,Nothing,Nothing,Nothing],
-    [Nothing,Nothing,Just 5,Just 3,Nothing,Just 8,Just 9,Nothing,Nothing],
-    [Nothing,Just 8,Just 3,Nothing,Nothing,Nothing,Nothing,Just 6,Nothing],
-    [Nothing,Nothing,Just 7,Just 6,Just 9,Nothing,Nothing,Just 4,Just 3],
-
-    [Just 3,Nothing,Nothing,Nothing,Just 4,Just 2,Nothing,Nothing,Nothing],
-    [Just 6,Just 5,Nothing,Nothing,Nothing,Just 7,Nothing,Just 8,Nothing],
-    [Nothing,Nothing,Just 9,Nothing,Nothing,Nothing,Just 5,Just 3,Just 7],
-    [Nothing,Nothing,Just 2,Nothing,Just 5,Just 4,Just 3,Nothing,Just 6],
-    [Just 7,Nothing,Nothing,Just 1,Nothing,Just 6,Nothing,Nothing,Just 9],
-    [Just 1,Nothing,Just 4,Just 3,Just 2,Nothing,Just 8,Nothing,Nothing],
-    [Just 2,Just 1,Just 7,Nothing,Nothing,Nothing,Just 9,Nothing,Nothing],
-    [Nothing,Just 8,Nothing,Just 2,Nothing,Nothing,Nothing,Just 6,Just 4],
-    [Nothing,Nothing,Nothing,Just 8,Just 9,Nothing,Nothing,Nothing,Just 3],
-
-    [Just 3,Just 6,Nothing,Nothing,Just 5,Nothing,Nothing,Nothing,Just 9],
-    [Nothing,Just 7,Just 1,Nothing,Nothing,Nothing,Just 2,Nothing,Just 4],
-    [Just 2,Nothing,Nothing,Just 1,Just 8,Nothing,Just 7,Nothing,Nothing],
-    [Nothing,Nothing,Nothing,Just 4,Nothing,Nothing,Just 2,Just 7,Nothing],
-    [Nothing,Just 1,Just 3,Just 5,Nothing,Just 2,Just 4,Just 6,Nothing],
-    [Nothing,Just 2,Just 8,Nothing,Nothing,Just 9,Nothing,Nothing,Nothing],
-    [Nothing,Nothing,Just 5,Nothing,Just 8,Just 3,Nothing,Nothing,Just 7],
-    [Just 3,Nothing,Just 8,Nothing,Nothing,Nothing,Just 6,Just 9,Nothing],
-    [Just 9,Nothing,Nothing,Nothing,Just 6,Nothing,Nothing,Just 4,Just 3]
-    ]
     -}
 blocks :: Puzzle -> [Block]
 blocks puzzle = row ++ transpose row ++ (map concat . concatMap transpose . chunksOf 3 . map (chunksOf 3)) row
     where row = rows puzzle
-
---     (rows puzzle) ++ (transpose (rows puzzle)) ++ squares puzzle where
---     squares puzzle = [square (x,y) puzzle | y <- [0..2], x <- [0..2]]
-
--- row :: Int -> Puzzle -> Block
--- row int puzzle = (rows puzzle) !! int
-
--- square :: (Int, Int) -> Puzzle -> Block
--- square (x,y) puzzle = 
---       concat
---       $ [take 3 (drop (x*3) row) | row <- take 3 (drop (y*3) (rows puzzle))]
 
 {-| Ex 3.3
 

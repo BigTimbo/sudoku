@@ -173,7 +173,8 @@ blank puzzle = case (findIndex isJust indexList) of Just x -> Pos (x, fromJust (
     `update s p v' returns a puzzle which is a copy of `s' except that
     the position `p' is updated with the value `v'. |-}
 update :: Puzzle -> Pos -> Maybe Int -> Puzzle
-update = undefined
+update puzzle (Pos(x,y)) value = Puzzle $ take x (rows puzzle) ++ [row !!= (y, value)] ++ drop (x+1) (rows puzzle)
+    where row = (rows puzzle) !! x
 
 {-| Ex 5.1
 

@@ -37,6 +37,10 @@ example =
     , [Nothing,Nothing,Just 7, Just 6, Just 9, Nothing,Nothing,Just 4, Just 3]
     ]
 
+easy1 :: Puzzle
+easy1 = 
+    Puzzle[[Nothing,Nothing,Just 3,Nothing,Just 2,Nothing,Just 6,Nothing,Nothing],[Just 9,Nothing,Nothing,Just 3,Nothing,Just 5,Nothing,Nothing,Just 1],[Nothing,Nothing,Just 1,Just 8,Nothing,Just 6,Just 4,Nothing,Nothing],[Nothing,Nothing,Just 8,Just 1,Nothing,Just 2,Just 9,Nothing,Nothing],[Just 7,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Just 8],[Nothing,Nothing,Just 6,Just 7,Nothing,Just 8,Just 2,Nothing,Nothing],[Nothing,Nothing,Just 2,Just 6,Nothing,Just 9,Just 5,Nothing,Nothing],[Just 8,Nothing,Nothing,Just 2,Nothing,Just 3,Nothing,Nothing,Just 9],[Nothing,Nothing,Just 5,Nothing,Just 1,Nothing,Just 3,Nothing,Nothing]]
+
 {-| Ex 1.1
 
     A sudoku with just blanks. |-}
@@ -97,7 +101,6 @@ isValidBlock (x:xs) = if notElem x xs then isValidBlock xs else False
     
     Collect all blocks on a board - the rows, the columns and the squares. |-}
 
-    -}
 blocks :: Puzzle -> [Block]
 blocks puzzle = row ++ transpose row ++ (map concat . concatMap transpose . chunksOf 3 . map (chunksOf 3)) row
     where row = rows puzzle
@@ -130,8 +133,7 @@ blank puzzle = case (findIndex isJust indexList) of Just x -> Pos (x, fromJust (
     `update s p v' returns a puzzle which is a copy of `s' except that
     the position `p' is updated with the value `v'. |-}
 update :: Puzzle -> Pos -> Maybe Int -> Puzzle
-update puzzle (Pos(x,y)) value = Puzzle $ take x (rows puzzle) ++ [row !!= (y, value)] ++ drop (x+1) (rows puzzle)
-    where row = (rows puzzle) !! y
+update puzzle (Pos(y, x)) value = Puzzle(rows puzzle !!= (y, ((rows puzzle !! y) !!= (x, value))))
 
 {-| Ex 5.1
 
@@ -154,8 +156,8 @@ pickASolution (x:xs) = if isJust x then x else pickASolution xs
     Read a puzzle and solve it. |-}
 readAndSolve :: FilePath -> IO (Maybe Puzzle)
 readAndSolve path = do
-                   puzzle <- readPuzzle path 
-                   pure (solve puzzle)
+                        puzzle <- readPuzzle path 
+                        pure (solve puzzle)
 
 
 {-| Ex 5.3
